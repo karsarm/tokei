@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>sample</title>
+  <style>
+
+  </style>
+  <script>
+    function twoDigit(num) {
+      let ret;
+      if( num < 10 ) 
+	    ret = "0" + num; 
+      else 
+   	    ret = num; 
+      return ret;
+    }
+    function showClock() {
+
+      var weeks = new Array('日', '月', '火', '水', '木', '金', '土');
+
+      let nowTime = new Date();
+      let nowYear = nowTime.getFullYear();
+      let nowMonth = ('00' + (nowTime.getMonth()+1)).slice(-2);
+      let nowDate = twoDigit( nowTime.getDate() );
+      let nowWeek = weeks[nowTime.getDay()];
+      let nowHour = twoDigit( nowTime.getHours() );
+      let nowMin  = twoDigit( nowTime.getMinutes() );
+      let nowSec  = twoDigit( nowTime.getSeconds() );
+      let msg = "<p style='font-size:120px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p style='font-size:200px;color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
+      document.getElementById("realtime").innerHTML = msg;
+    }
+
+    setInterval('showClock()',1000);
+  </script>
+</head>
+
+<body style="background-color:black;color:white;">
+
+  <p id="realtime" style="font-size:200px;font-weight:bold;text-align:center;margin:0;"></p>
+    
+
+    <p id="status" style="display:none;"></p>
+
+    <div id="result" style="display:none;">
+      <h2 id="cityName"></h2>
+      <p id="weather"></p>
+      <p id="temperature"></p>
+      <p id="humidity"></p>
+    </div>
+
+<script>
+    const weatherDescriptions = {
+  0:  "快晴",
+  1:  "ほぼ快晴",
+  2:  "一部曇り",
+  3:  "曇り",
+  45: "霧",
+  48: "霧氷",
+  51: "霧雨（弱）",
+  53: "霧雨",
+  55: "霧雨（強）",
+  61: "雨（弱）",
+  63: "雨",
+  65: "雨（強）",
+  71: "雪（弱）",
+  73: "雪",
+  75: "雪（強）",
+  80: "にわか雨（弱）",
+  81: "にわか雨",
+  82: "にわか雨（強）",
+  95: "雷雨",
+  99: "雷雨と雹"
+};
+
+// 要素の取得
+const cityInput     = document.getElementById("cityInput");
+const btnSearch     = document.getElementById("btnSearch");
+const statusEl      = document.getElementById("status");
+const resultEl      = document.getElementById("result");
+const cityNameEl    = document.getElementById("cityName");
+const weatherEl     = document.getElementById("weather");
+const temperatureEl = document.getElementById("temperature");
+const humidityEl   = document.getElementById("humidity");
+
+// 都市名から緯度・経度を取得する関数
+async function getCoordinates(cityName) {
+  const url =
+    "https://geocoding-api.open-meteo.com/v1/search?name=" +
+    encodeURIComponent(cityName) +
+    "&count=1&language=ja";
+
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("都市情報の取得に失敗しました");
+
+  const data = await response.json();
+  if (!data.results || data.results.length === 0) {
+    throw new Error("都市が見つかりませんでした：" + cityName);
+  }
+
+  return {
+    name:      data.results[0].name,
+    latitude:  data.results[0].latitude,
+    longitude: data.results[0].longitude
+  };
+}
+
+// 緯度・経度から天気を取得する関数
+async function getWeather(latitude, longitude) {
+  const url =
+    "https://api.open-meteo.com/v1/forecast" +
+    "?latitude=" + latitude +
+    "&longitude=" + longitude +
+    "&current=temperature_2m,weathercode,relative_humidity_2m" +
+    "&timezone=Asia%2FTokyo";
+
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("天気情報の取得に失敗しました");
+
+  const data = await response.json();
+  return data.current;
+}
+
+// メインの処理
+async function searchWeather() {
+  const cityName = "Tokyo";
+
+  if (!cityName) {
+    statusEl.textContent = "都市名を入力してください。";
+    statusEl.style.color = "red";
+    return;
+  }
+
+  // ボタンを無効化
+  statusEl.textContent   = "取得中...";
+  statusEl.style.color   = "gray";
+  resultEl.style.display = "none";
+
+  try {
+    // ① 緯度・経度を取得
+    const location = await getCoordinates(cityName);
+
+    // ② 天気を取得
+    const weather = await getWeather(location.latitude, location.longitude);
+
+    // ③ 天気コードを説明に変換
+    const description =
+      weatherDescriptions[weather.weathercode] || "不明";
+
+    // ④ 画面に表示
+    statusEl.textContent   = "取得完了！";
+    statusEl.style.color   = "green";
+    resultEl.style.display = "block";
+
+    cityNameEl.textContent    = location.name + " の現在の天気";
+    weatherEl.textContent     = "天気：" + description;
+    temperatureEl.textContent = "気温：" + weather.temperature_2m + "℃";
+    humidityEl.textContent   = "湿度：" + weather.relative_humidity_2m+ "％";
+
+  } catch (error) {
+    statusEl.textContent   = "エラー：" + error.message;
+    statusEl.style.color   = "red";
+    resultEl.style.display = "none";
+
+  } finally {
+  }
+}
+
+    searchWeather();
+
+var fn = function() {
+  searchWeather();
+  console.log("動いたよ");
+  i++;
+};
+var tm = 180000;
+var i = 1;
+setInterval(fn,tm);
+
+</script>
+</body>
+
+</html>
