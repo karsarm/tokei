@@ -80,7 +80,7 @@ const btnSearch     = document.getElementById("btnSearch");
 const statusEl      = document.getElementById("status");
 const resultEl      = document.getElementById("result");
 const cityNameEl    = document.getElementById("cityName");
-const weatherEl     = document.getElementById("weather");
+var weatherEl     = document.getElementById("weather");
 const temperatureEl = document.getElementById("temperature");
 const humidityEl   = document.getElementById("humidity");
 
@@ -145,8 +145,17 @@ async function searchWeather() {
     const weather = await getWeather(location.latitude, location.longitude);
 
     // ③ 天気コードを説明に変換
-    const description =
-      weatherDescriptions[weather.weathercode] || "不明";
+    const description = weatherDescriptions[weather.weathercode] || "不明";
+
+	console.log(description);
+
+　　　if (description === "快晴" || description === "ほぼ快晴"){
+         var descriptionImage = "tenki/hare.png";
+	console.log(descriptionImage);
+      }
+
+
+
 
     // ④ 画面に表示
     statusEl.textContent   = "取得完了！";
@@ -154,7 +163,10 @@ async function searchWeather() {
     resultEl.style.display = "block";
 
     cityNameEl.textContent    = location.name + " の現在の天気";
-    weatherEl.textContent     = "天気：" + description;
+
+    var tenkiEl = document.createElement("img");
+    tenkiEl.src = descriptionImage;
+    weatherEl.appendChild(tenkiEl);
     temperatureEl.textContent = "気温：" + weather.temperature_2m + "℃";
     humidityEl.textContent   = "湿度：" + weather.relative_humidity_2m+ "％";
 
