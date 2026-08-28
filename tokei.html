@@ -162,6 +162,7 @@ async function searchWeather() {
 
     // ③ 天気コードを説明に変換
     const description = weatherDescriptions[weather.weathercode] || "不明";
+    console.log("どうかな？"+description)
     var a = 0;
     const Weekday = Array(0);
     
@@ -174,10 +175,15 @@ async function searchWeather() {
 
 　　if (description === "快晴" || description === "ほぼ快晴"){
        var descriptionImage = "tenki/hare.png";
-       console.log(descriptionImage);
-    } else if (description === "一部曇り" || description === "曇り"){
+    } else if (description === "一部曇り" || description === "曇り" || description === "霧氷" || description === "霧"){
        var descriptionImage = "tenki/kumori.png";
-       console.log(descriptionImage);
+    } else if (description === "霧雨（弱）" || description === "霧雨" || description === "霧雨（強）" || description === "雨（弱）" || 
+                    description === "雨" || description === "雨（強）" || description === "にわか雨（弱）" || description === "にわか雨" || description === "にわか雨（強）"){
+       var descriptionImage = "tenki/ame.png";
+    } else if (description === "雪（弱）" || description === "雪" ||description === "雪（強）"){
+       var descriptionImage = "tenki/yuki.png";
+    } else if (description === "雷雨" || description === "雷雨と雹"){
+       var descriptionImage = "tenki/raiu.png";
     }
 
 
