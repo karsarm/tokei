@@ -28,7 +28,7 @@
       let nowHour = twoDigit( nowTime.getHours() );
       let nowMin  = twoDigit( nowTime.getMinutes() );
       let nowSec  = twoDigit( nowTime.getSeconds() );
-      let msg = "<p style='font-size:120px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p style='font-size:200px;color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
+      let msg = "<p style='font-size:120px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p style='font-size:200px;color:white;margin:0 0 -50px 0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
       document.getElementById("realtime").innerHTML = msg;
     }
 
@@ -100,9 +100,9 @@ async function getCoordinates(cityName) {
   }
 
   return {
-    name:      data.results[0].name,
-    latitude:  data.results[0].latitude,
-    longitude: data.results[0].longitude
+    name:           data.results[0].name,
+    latitude:       data.results[0].latitude,
+    longitude:      data.results[0].longitude,
   };
 }
 
@@ -119,8 +119,23 @@ async function getWeather(latitude, longitude) {
   if (!response.ok) throw new Error("天気情報の取得に失敗しました");
 
   const data = await response.json();
+  console.log(data);
   return data.current;
+
 }
+//こっち一週間分
+async function getDailyWeather() {
+  const dailyURL = 
+    "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo";
+
+  const response2 = await fetch(dailyURL);
+  if (!response2.ok) throw new Error("一週間天気情報の取得に失敗しました");
+
+  const dailyData = await response2.json();
+  console.log(dailyData);
+  return dailyData.daily;
+}
+
 
 // メインの処理
 async function searchWeather() {
@@ -143,18 +158,31 @@ async function searchWeather() {
 
     // ② 天気を取得
     const weather = await getWeather(location.latitude, location.longitude);
+    const dailyWeather = await getDailyWeather();   
 
     // ③ 天気コードを説明に変換
     const description = weatherDescriptions[weather.weathercode] || "不明";
+    var a = 0;
+    const Weekday = Array(0);
+    
+    const tenk = weatherDescriptions[dailyWeather.weather_code[a]]; //|| "不明";
+    console.log("いけてるよ～～～～"+tenk);
+    Weekday.push(tenk)
+    console.log(Weekday)
+    
+   
 
-	console.log(description);
+　　if (description === "快晴" || description === "ほぼ快晴"){
+       var descriptionImage = "tenki/hare.png";
+       console.log(descriptionImage);
+    } else if (description === "一部曇り" || description === "曇り"){
+       var descriptionImage = "tenki/kumori.png";
+       console.log(descriptionImage);
+    }
 
-　　　if (description === "快晴" || description === "ほぼ快晴"){
-         var descriptionImage = "tenki/hare.png";
-	console.log(descriptionImage);
-      }
 
-
+    var a = 0;
+    var day =  weatherDescriptions[dailyWeather.weather_code[a]] //|| "不明";
 
 
     // ④ 画面に表示
@@ -182,11 +210,16 @@ async function searchWeather() {
     searchWeather();
 
 var fn = function() {
+  document.getElementById("cityName").textContent = ""
+  document.getElementById("weather").textContent = ""
+  document.getElementById("temperature").textContent = ""
+  document.getElementById("humidity").textContent = ""
+
   searchWeather();
   console.log("動いたよ");
   i++;
 };
-var tm = 1800000;
+var tm = 18000;
 var i = 1;
 setInterval(fn,tm);
 
