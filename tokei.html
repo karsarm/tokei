@@ -28,7 +28,7 @@
       let nowHour = twoDigit( nowTime.getHours() );
       let nowMin  = twoDigit( nowTime.getMinutes() );
       let nowSec  = twoDigit( nowTime.getSeconds() );
-      let msg = "<p style='font-size:120px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p style='font-size:200px;color:white;margin:0 0 -50px 0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
+      let msg = "<p style='font-size:100px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p style='font-size:200px;color:black;background-color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
       document.getElementById("realtime").innerHTML = msg;
     }
 
@@ -42,12 +42,35 @@
     
 
     <p id="status" style="display:none;"></p>
-
-    <div id="result" style="display:none;">
-      <h2 id="cityName"></h2>
-      <p id="weather"></p>
-      <p id="temperature"></p>
-      <p id="humidity"></p>
+    <div style="display:flex;margin-top:8px;">
+      <div id="result" style="width:183px;">
+        <p id="cityName" style="font-weight:bold;"></p>
+        <p id="weather" style="width:183px;height:183px;margin:0 auto;"></p>
+        <p id="temperature" style="margin:0;font-weight:bold;font-size:20px;"></p>
+        <p id="humidity" style="margin:0;font-weight:bold;font-size:20px;"></p>
+      </div>
+      <div style="width:75%;border-left:2px solid white;">
+        <div style="display:flex">
+          <div id ="tommorow1" style="text-align:center;width:33%;">
+            <p id="hiduke1"></p>
+            <p id="weather1" style="width:183px;height:183px;margin:0 auto;"></p>
+            <p id="temperatureMax1" style="margin-top:0;"></p>
+            <p id="temperatureMin1"></p>
+          </div>
+          <div id ="tommorow2" style="text-align:center;width:33%;">
+            <p id="hiduke2"></p>
+            <p id="weather2" style="width:183px;height:183px;margin:0 auto;"></p>
+            <p id="temperatureMax2" style="margin-top:0;"></p>
+            <p id="temperatureMin2"></p>
+          </div>
+          <div id ="tommorow3" style="text-align:center;width:33%;">
+            <p id="hiduke3"></p>
+            <p id="weather3" style="width:183px;height:183px;margin:0 auto;"></p>
+            <p id="temperatureMax3" style="margin-top:0;"></p>
+            <p id="temperatureMin3"></p>
+          </div>
+        </div>
+      </div>
     </div>
 
 <script>
@@ -137,7 +160,7 @@ async function getDailyWeather() {
 }
 
 
-// メインの処理
+// 現在の天気の処理
 async function searchWeather() {
   const cityName = "Tokyo";
 
@@ -150,7 +173,7 @@ async function searchWeather() {
   // ボタンを無効化
   statusEl.textContent   = "取得中...";
   statusEl.style.color   = "gray";
-  resultEl.style.display = "none";
+  resultEl.style.display = "block";
 
   try {
     // ① 緯度・経度を取得
@@ -158,20 +181,11 @@ async function searchWeather() {
 
     // ② 天気を取得
     const weather = await getWeather(location.latitude, location.longitude);
-    const dailyWeather = await getDailyWeather();   
+
 
     // ③ 天気コードを説明に変換
     const description = weatherDescriptions[weather.weathercode] || "不明";
     console.log("どうかな？"+description)
-    var a = 0;
-    const Weekday = Array(0);
-    
-    const tenk = weatherDescriptions[dailyWeather.weather_code[a]]; //|| "不明";
-    console.log("いけてるよ～～～～"+tenk);
-    Weekday.push(tenk)
-    console.log(Weekday)
-    
-   
 
 　　if (description === "快晴" || description === "ほぼ快晴"){
        var descriptionImage = "tenki/hare.png";
@@ -187,14 +201,12 @@ async function searchWeather() {
     }
 
 
-    var a = 0;
-    var day =  weatherDescriptions[dailyWeather.weather_code[a]] //|| "不明";
-
-
     // ④ 画面に表示
     statusEl.textContent   = "取得完了！";
     statusEl.style.color   = "green";
     resultEl.style.display = "block";
+    resultEl.style.width   = "25%";
+    resultEl.style.textAlign = "center";
 
     cityNameEl.textContent    = location.name + " の現在の天気";
 
@@ -207,13 +219,106 @@ async function searchWeather() {
   } catch (error) {
     statusEl.textContent   = "エラー：" + error.message;
     statusEl.style.color   = "red";
-    resultEl.style.display = "none";
+    resultEl.style.display = "block";
 
   } finally {
   }
 }
 
+//明日、明後日、明々後日の天気
+async function threeDayWeather() {
+
+    const dailyWeather = await getDailyWeather();   
+
+    const WeekD1 = dailyWeather.time[0];
+    const WeekD2 = dailyWeather.time[1];
+    const WeekD3 = dailyWeather.time[2];
+
+    const tenk1 = weatherDescriptions[dailyWeather.weather_code[0]];
+    const tenk2 = weatherDescriptions[dailyWeather.weather_code[1]];
+    const tenk3 = weatherDescriptions[dailyWeather.weather_code[2]];
+
+    const maxKion1 = dailyWeather.temperature_2m_max[0];
+    const maxKion2 = dailyWeather.temperature_2m_max[1];
+    const maxKion3 = dailyWeather.temperature_2m_max[2];
+
+    const minKion1 = dailyWeather.temperature_2m_min[0];
+    const minKion2 = dailyWeather.temperature_2m_min[1];
+    const minKion3 = dailyWeather.temperature_2m_min[2];
+
+
+    if (tenk1 === "快晴" || tenk1 === "ほぼ快晴"){
+       var tenk1Image = "tenki/hare.png";
+    } else if (tenk1 === "一部曇り" || tenk1 === "曇り" || tenk1 === "霧氷" || tenk1 === "霧"){
+       var tenk1Image = "tenki/kumori.png";
+    } else if (tenk1 === "霧雨（弱）" || tenk1 === "霧雨" || tenk1 === "霧雨（強）" || tenk1 === "雨（弱）" || 
+                    tenk1 === "雨" || tenk1 === "雨（強）" || tenk1 === "にわか雨（弱）" || tenk1 === "にわか雨" || tenk1 === "にわか雨（強）"){
+       var tenk1Image = "tenki/ame.png";
+    } else if (tenk1 === "雪（弱）" || tenk1 === "雪" ||tenk1 === "雪（強）"){
+       var tenk1Image = "tenki/yuki.png";
+    } else if (tenk1 === "雷雨" || tenk1 === "雷雨と雹"){
+       var tenk1Image = "tenki/raiu.png";
+    }
+
+    if (tenk2 === "快晴" || tenk2 === "ほぼ快晴"){
+       var tenk2Image = "tenki/hare.png";
+    } else if (tenk2 === "一部曇り" || tenk2 === "曇り" || tenk2 === "霧氷" || tenk2 === "霧"){
+       var tenk2Image = "tenki/kumori.png";
+    } else if (tenk2 === "霧雨（弱）" || tenk2 === "霧雨" || tenk2 === "霧雨（強）" || tenk2 === "雨（弱）" || 
+                    tenk2 === "雨" || tenk2 === "雨（強）" || tenk2 === "にわか雨（弱）" || tenk2 === "にわか雨" || tenk2 === "にわか雨（強）"){
+       var tenk2Image = "tenki/ame.png";
+    } else if (tenk2 === "雪（弱）" || tenk2 === "雪" ||tenk2 === "雪（強）"){
+       var tenk2Image = "tenki/yuki.png";
+    } else if (tenk2 === "雷雨" || tenk2 === "雷雨と雹"){
+       var tenk2Image = "tenki/raiu.png";
+    }
+
+    if (tenk3 === "快晴" || tenk3 === "ほぼ快晴"){
+       var tenk3Image = "tenki/hare.png";
+    } else if (tenk3 === "一部曇り" || tenk3 === "曇り" || tenk3 === "霧氷" || tenk3 === "霧"){
+       var tenk3Image = "tenki/kumori.png";
+    } else if (tenk3 === "霧雨（弱）" || tenk3 === "霧雨" || tenk3 === "霧雨（強）" || tenk3 === "雨（弱）" || 
+                    tenk3 === "雨" || tenk3 === "雨（強）" || tenk3 === "にわか雨（弱）" || tenk3 === "にわか雨" || tenk3 === "にわか雨（強）"){
+       var tenk3Image = "tenki/ame.png";
+    } else if (tenk3 === "雪（弱）" || tenk3 === "雪" ||tenk3 === "雪（強）"){
+       var tenk3Image = "tenki/yuki.png";
+    } else if (tenk3 === "雷雨" || tenk3 === "雷雨と雹"){
+       var tenk3Image = "tenki/raiu.png";
+    }
+
+
+    var tenkiImgSrc1 = document.getElementById("weather1");
+    var tenkiImgSrc2 = document.getElementById("weather2");
+    var tenkiImgSrc3 = document.getElementById("weather3");
+
+    var imgSrc1 = document.createElement("img");
+    var imgSrc2 = document.createElement("img");
+    var imgSrc3 = document.createElement("img");
+
+    imgSrc1.src = tenk1Image;
+    imgSrc2.src = tenk2Image;
+    imgSrc3.src = tenk3Image;
+
+    tenkiImgSrc1.appendChild(imgSrc1);
+    tenkiImgSrc2.appendChild(imgSrc2);
+    tenkiImgSrc3.appendChild(imgSrc3);
+
+    document.getElementById("hiduke1").textContent = WeekD1;
+    document.getElementById("hiduke2").textContent = WeekD2;
+    document.getElementById("hiduke3").textContent = WeekD3;
+
+    document.getElementById("temperatureMax1").textContent = "最高："+maxKion1+"℃";
+    document.getElementById("temperatureMax2").textContent = "最高："+maxKion2+"℃";
+    document.getElementById("temperatureMax3").textContent = "最高："+maxKion3+"℃";
+
+    document.getElementById("temperatureMin1").textContent = "最低："+minKion1+"℃";
+    document.getElementById("temperatureMin2").textContent = "最低："+minKion2+"℃";
+    document.getElementById("temperatureMin3").textContent = "最低："+minKion3+"℃";
+    
+}
+
     searchWeather();
+    threeDayWeather();
 
 var fn = function() {
   document.getElementById("cityName").textContent = ""
@@ -225,7 +330,7 @@ var fn = function() {
   console.log("動いたよ");
   i++;
 };
-var tm = 18000;
+var tm = 180000;
 var i = 1;
 setInterval(fn,tm);
 
