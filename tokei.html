@@ -28,7 +28,7 @@
       let nowHour = twoDigit( nowTime.getHours() );
       let nowMin  = twoDigit( nowTime.getMinutes() );
       let nowSec  = twoDigit( nowTime.getSeconds() );
-      let msg = "<p style='font-size:100px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p style='font-size:200px;color:black;background-color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
+      let msg = "<p style='font-size:100px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p style='justify-content:center;align-items: center;display: flex;font-size:350px;color:black;background-color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
       document.getElementById("realtime").innerHTML = msg;
     }
 
@@ -38,11 +38,11 @@
 
 <body style="background-color:black;color:white;">
 
-  <p id="realtime" style="font-size:200px;font-weight:bold;text-align:center;margin:0;"></p>
+  <p id="realtime" style="font-weight:bold;text-align:center;margin:0;"></p>
     
 
     <p id="status" style="display:none;"></p>
-    <div style="display:flex;margin-top:8px;">
+    <div style="display:flex;margin-top:16px;">
       <div id="result" style="width:183px;">
         <p id="cityName" style="font-weight:bold;"></p>
         <p id="weather" style="width:183px;height:183px;margin:0 auto;"></p>
@@ -94,6 +94,9 @@
   81: "にわか雨",
   82: "にわか雨（強）",
   95: "雷雨",
+  96: "雷雨",
+  97: "雷雨",
+  98: "雷雨",
   99: "雷雨と雹"
 };
 
