@@ -28,8 +28,8 @@
       let nowHour = twoDigit( nowTime.getHours() );
       let nowMin  = twoDigit( nowTime.getMinutes() );
       let nowSec  = twoDigit( nowTime.getSeconds() );
-      let msg = "<p style='font-size:30px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p style='justify-content:center;align-items: center;display: flex;font-size:150px;color:black;background-color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
-      document.getElementById("realtime").innerHTML = msg;
+      let msg = "<p style='font-size:30px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p id='realtime' style='justify-content:center;align-items: center;display: flex;font-size:150px;color:black;background-color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
+      document.getElementById("realtimeDate").innerHTML = msg;
     }
 
     setInterval('showClock()',1000);
@@ -38,7 +38,7 @@
 
 <body style="background-color:black;color:white;">
 
-  <p id="realtime" style="font-weight:bold;text-align:center;margin:0;"></p>
+  <p id="realtimeDate" style="font-weight:bold;text-align:center;margin:0;"></p>
     
 
     <p id="status" style="display:none;"></p>
@@ -152,7 +152,7 @@ async function getWeather(latitude, longitude) {
 //こっち一週間分
 async function getDailyWeather() {
   const dailyURL = 
-    "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo";
+    "https://api.open-meteo.com/v1/forecast?latitude=35.4&longitude=139.33&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo";
 
   const response2 = await fetch(dailyURL);
   if (!response2.ok) throw new Error("一週間天気情報の取得に失敗しました");
@@ -323,6 +323,7 @@ async function threeDayWeather() {
     searchWeather();
     threeDayWeather();
 
+//今日の天気の更新処理
 var fn = function() {
   document.getElementById("cityName").textContent = ""
   document.getElementById("weather").textContent = ""
@@ -336,6 +337,18 @@ var fn = function() {
 var tm = 180000;
 var i = 1;
 setInterval(fn,tm);
+
+
+//定時で３日間の天気更新。
+var hourCount = function clockCheck(){
+    count1 = document.getElementById("realtime");
+    if (count1.textContent === "00:00:00"){
+        location.reload(); //日付が変わったらリロードする。
+    };
+};
+var hourCountTime = 1000;
+var i = 1;
+setInterval(hourCount,hourCountTime);
 
 </script>
 </body>
