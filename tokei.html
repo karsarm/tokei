@@ -16,23 +16,7 @@
    	    ret = num; 
       return ret;
     }
-    function showClock() {
 
-      var weeks = new Array('日', '月', '火', '水', '木', '金', '土');
-
-      let nowTime = new Date();
-      let nowYear = nowTime.getFullYear();
-      let nowMonth = ('00' + (nowTime.getMonth()+1)).slice(-2);
-      let nowDate = twoDigit( nowTime.getDate() );
-      let nowWeek = weeks[nowTime.getDay()];
-      let nowHour = twoDigit( nowTime.getHours() );
-      let nowMin  = twoDigit( nowTime.getMinutes() );
-      let nowSec  = twoDigit( nowTime.getSeconds() );
-      let msg = "<p style='font-size:30px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p id='realtime' style='justify-content:center;align-items: center;display: flex;font-size:150px;color:black;background-color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
-      document.getElementById("realtimeDate").innerHTML = msg;
-    }
-
-    setInterval('showClock()',1000);
   </script>
 </head>
 
@@ -44,7 +28,7 @@
     <p id="status" style="display:none;"></p>
     <div style="display:flex;margin-top:16px;">
       <div id="result" style="width:183px;">
-        <p id="cityName" style="font-weight:bold;"></p>
+        <p id="cityName" style="font-weight:bold;font-size:30px;"></p>
         <p id="weather" style="width:183px;height:183px;margin:0 auto;"></p>
         <p id="temperature" style="margin:0;font-weight:bold;font-size:20px;"></p>
         <p id="humidity" style="margin:0;font-weight:bold;font-size:20px;"></p>
@@ -52,19 +36,19 @@
       <div style="width:75%;border-left:2px solid white;">
         <div style="display:flex">
           <div id ="tommorow1" style="text-align:center;width:33%;">
-            <p id="hiduke1"></p>
+            <p id="hiduke1" style="font-size:22px;"></p>
             <p id="weather1" style="width:183px;height:183px;margin:0 auto;"></p>
             <p id="temperatureMax1" style="margin:0;"></p>
             <p id="temperatureMin1" style="margin:0;"></p>
           </div>
           <div id ="tommorow2" style="text-align:center;width:33%;">
-            <p id="hiduke2"></p>
+            <p id="hiduke2" style="font-size:22px;"></p>
             <p id="weather2" style="width:183px;height:183px;margin:0 auto;"></p>
             <p id="temperatureMax2" style="margin:0;"></p>
             <p id="temperatureMin2" style="margin:0;"></p>
           </div>
           <div id ="tommorow3" style="text-align:center;width:33%;">
-            <p id="hiduke3"></p>
+            <p id="hiduke3" style="font-size:22px;"></p>
             <p id="weather3" style="width:183px;height:183px;margin:0 auto;"></p>
             <p id="temperatureMax3" style="margin:0;"></p>
             <p id="temperatureMin3" style="margin:0;"></p>
@@ -74,6 +58,9 @@
     </div>
 
 <script>
+
+
+
     const weatherDescriptions = {
   0:  "快晴",
   1:  "ほぼ快晴",
@@ -211,13 +198,14 @@ async function searchWeather() {
     resultEl.style.width   = "25%";
     resultEl.style.textAlign = "center";
 
-    cityNameEl.textContent    = location.name + " の現在の天気";
+    cityNameEl.textContent    = location.name + "の現在の天気";
+    cityNameEl.style.fontSize = 25;
 
     var tenkiEl = document.createElement("img");
     tenkiEl.src = descriptionImage;
     weatherEl.appendChild(tenkiEl);
-    temperatureEl.textContent = "気温：" + weather.temperature_2m + "℃";
-    humidityEl.textContent   = "湿度：" + weather.relative_humidity_2m+ "％";
+    temperatureEl.textContent = "現在の気温：" + weather.temperature_2m + "℃";
+    humidityEl.textContent   = "現在の湿度：" + weather.relative_humidity_2m+ "％";
 
   } catch (error) {
     statusEl.textContent   = "エラー：" + error.message;
@@ -289,7 +277,10 @@ async function threeDayWeather() {
        var tenk3Image = "tenki/raiu.png";
     }
 
-
+    const day1 = '日月火水木金土'[new Date().getDay()];
+    const day2 = '日月火水木金土'[new Date().getDay()+1];
+    const day3 = '日月火水木金土'[new Date().getDay()+2];
+ 
     var tenkiImgSrc1 = document.getElementById("weather1");
     var tenkiImgSrc2 = document.getElementById("weather2");
     var tenkiImgSrc3 = document.getElementById("weather3");
@@ -306,22 +297,54 @@ async function threeDayWeather() {
     tenkiImgSrc2.appendChild(imgSrc2);
     tenkiImgSrc3.appendChild(imgSrc3);
 
-    document.getElementById("hiduke1").textContent = WeekD1;
-    document.getElementById("hiduke2").textContent = WeekD2;
-    document.getElementById("hiduke3").textContent = WeekD3;
+    tenkiImgSrc1.style.width = 150;
 
-    document.getElementById("temperatureMax1").textContent = "最高："+maxKion1+"℃";
-    document.getElementById("temperatureMax2").textContent = "最高："+maxKion2+"℃";
-    document.getElementById("temperatureMax3").textContent = "最高："+maxKion3+"℃";
+    document.getElementById("hiduke1").textContent = WeekD1+"("+ day1 +")";
+    document.getElementById("hiduke2").textContent = WeekD2+"("+ day2 +")";
+    document.getElementById("hiduke3").textContent = WeekD3+"("+ day3 +")";
 
-    document.getElementById("temperatureMin1").textContent = "最低："+minKion1+"℃";
-    document.getElementById("temperatureMin2").textContent = "最低："+minKion2+"℃";
-    document.getElementById("temperatureMin3").textContent = "最低："+minKion3+"℃";
+    document.getElementById("hiduke1")
+
+    document.getElementById("temperatureMax1").textContent = "最高気温："+maxKion1+"℃";
+    document.getElementById("temperatureMax2").textContent = "最高気温："+maxKion2+"℃";
+    document.getElementById("temperatureMax3").textContent = "最高気温："+maxKion3+"℃";
+
+    document.getElementById("temperatureMin1").textContent = "最低気温："+minKion1+"℃";
+    document.getElementById("temperatureMin2").textContent = "最低気温："+minKion2+"℃";
+    document.getElementById("temperatureMin3").textContent = "最低気温："+minKion3+"℃";
+
+    const cnt1 = document.getElementById('hiduke1');
+    const cnt2 = document.getElementById('hiduke2');
+    const cnt3 = document.getElementById('hiduke3');
+
+    cnt1.insertAdjacentHTML('afterbegin', '<p style="font-size:30px;font-weight:bold;">今日</p>');
+    cnt2.insertAdjacentHTML('afterbegin', '<p style="font-size:30px;font-weight:bold;">明日</p>');
+    cnt3.insertAdjacentHTML('afterbegin', '<p style="font-size:30px;font-weight:bold;">明後日</p>');
+
+
     
 }
 
     searchWeather();
     threeDayWeather();
+
+function showClock() {
+
+  var weeks = new Array('日', '月', '火', '水', '木', '金', '土');
+
+  let nowTime = new Date();
+  let nowYear = nowTime.getFullYear();
+  let nowMonth = ('00' + (nowTime.getMonth()+1)).slice(-2);
+  let nowDate = twoDigit( nowTime.getDate() );
+  let nowWeek = weeks[nowTime.getDay()];
+  let nowHour = twoDigit( nowTime.getHours() );
+  let nowMin  = twoDigit( nowTime.getMinutes() );
+  let nowSec  = twoDigit( nowTime.getSeconds() );
+  //let msg = "<p style='font-size:30px;margin:0;color:white;'>" + nowYear + "/" + nowMonth + "/" + nowDate + "("+ nowWeek +")</p><p id='realtime' style='justify-content:center;align-items: center;display: flex;font-size:150px;color:black;background-color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
+  let msg = "<p id='realtime' style='justify-content:center;align-items: center;display: flex;font-size:150px;color:white;margin:0;'>" + nowHour + ":" + nowMin + ":" + nowSec;
+  document.getElementById("realtimeDate").innerHTML = msg;
+}
+setInterval('showClock()',1000);
 
 //今日の天気の更新処理
 var fn = function() {
@@ -347,7 +370,6 @@ var hourCount = function clockCheck(){
     };
 };
 var hourCountTime = 1000;
-var i = 1;
 setInterval(hourCount,hourCountTime);
 
 </script>
